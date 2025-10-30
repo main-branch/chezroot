@@ -3,20 +3,27 @@
 A `sudo` wrapper for `chezmoi` to manage root-owned files across your entire
 filesystem.
 
-`chezmoi` is the premier tool for managing your personal dotfiles. `chezroot` is a
-companion wrapper that extends `chezmoi`'s power to your system-level files, allowing
-you to manage files in `/etc`, `/Library/LaunchDaemons`, or anywhere else on your
-root filesystem with the same `chezmoi` workflow.
+`chezroot` is a companion wrapper that extends `chezmoi`'s power to your system-level
+files, allowing you to manage files in `/etc`, `/Library/LaunchDaemons`, or anywhere
+else on your root filesystem with the same `chezmoi` workflow.
+
+Since `chezroot` is a wrapper and not a reimplementation, it passes most commands,
+flags, and configuration options directly to the underlying `chezmoi` binary.
+
+This documentation focuses on features, limitations, and design choices that are
+specific to `chezroot` (like the profile system, sudo handling, and unsupported
+commands). For all standard `chezmoi` functionality such as template functions,
+editor selection logic, or git integration, refer to [the official chezmoi
+documentation](https://www.google.com/search?q=https://www.chezmoi.io/docs/).
 
 - [Features](#features)
 - [Platform Support](#platform-support)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
-- [Using Profiles](#using-profiles)
+- [Profiles](#profiles)
 - [Passwordless sudo](#passwordless-sudo)
 - [Design](#design)
-- [Items to do](#items-to-do)
 - [Acknowledgements](#acknowledgements)
 
 ## Features
@@ -34,10 +41,9 @@ root filesystem with the same `chezmoi` workflow.
 - **Safe by Default:** `chezroot init` automatically creates a `.chezmoiignore` file
   that ignores everything. You must explicitly un-ignore the files you wish to
   manage.
-- **Automatic Shell Completion:** Full `chezmoi` completions for Bash and Zsh that
-  work automatically.
-- **No Dependencies:** `chezroot` is a single POSIX-compliant shell script. It only
-  requires `chezmoi`, `sudo`, `bash`, and `sed`.
+- **No External Library Dependencies:** `chezroot` is a single POSIX-compliant shell
+  script with no dependencies other than `chezmoi`, `sudo`, and common system
+  utilities (`bash`, `sed`)."
 - **Cross-Platform:** Works seamlessly on both **Linux and macOS**.
 
 ## Platform Support
@@ -166,7 +172,7 @@ $ chezroot -v apply
    Specifies the profile to use. This overrides the `$CHEZROOT_PROFILE` environment
    variable if it is also set.
 
-   See the "Using Profiles" section for details.
+   See the "Profiles" section for details.
 
 - `--config` and `--config-format` are not supported
 
@@ -190,24 +196,7 @@ $ chezroot -v apply
    If neither the `--profile` option nor this variable are set, `chezroot` will use the
    profile name `default`.
 
-- `$VISUAL` / `$EDITOR`
-
-   Used by the `chezroot edit ...` to determine which editor program to use. The
-   editor is chosen by checking the following, in this order:
-
-  - **$VISUAL Environment Variable:** It first checks if the `$VISUAL` environment
-    variable is set.
-
-  - **$EDITOR Environment Variable:** If `$VISUAL` is not set, it falls back to
-    checking for the `$EDITOR` environment variable.
-
-  - **System Default:** If none of the above are set, `chezroot` uses a hardcoded
-    default of `vi`.
-
-   **NOTE:** specifying `edit.command` in the config file is not supported as it is
-   in chezmoi.
-
-## Using Profiles
+## Profiles
 
 By default, `chezroot` manages a single profile (a self-contained set of
 configurations). The default profile is named `default` and is stored in
@@ -269,6 +258,82 @@ Let's set up a new profile called nginx to manage web server files.
    chezroot apply # Also uses 'nginx' profile
    ```
 
+### Profiles Management
+
+`chezroot` provides a dedicated profile command to list, inspect, and delete your
+profiles.
+
+A profile consists of four distinct directory paths:
+
+- **Source:** $HOME/.local/share/chezroot/$PROFILE/
+- **Config:** $HOME/.config/chezroot/$PROFILE/
+- **State:** $HOME/.local/state/chezroot/$PROFILE/
+- **Cache:** $HOME/.cache/chezroot/cache/$PROFILE/
+
+#### profile list
+
+Lists the names of all discovered profiles. This command scans the `chezroot` config
+and data directories and prints a list of all profile names it finds.
+
+**Example:**
+
+```shell
+$ chezroot profile list
+default
+nginx
+webserver
+```
+
+#### profile info [profile...]
+
+Displays the four filesystem paths associated with one or more profiles. This is a
+read-only command used to inspect the exact directories that make up a profile.
+
+**Example:**
+
+```shell
+$ chezroot profile info default nginx
+Profile: default
+  Config: /Users/james/.config/chezroot/default
+  Source: /Users/james/.local/share/chezroot/default
+  State:  /Users/james/.local/state/chezroot/default
+  Cache:  /Users/james/.cache/chezroot/cache/default
+
+Profile: nginx
+  Config: /Users/james/.config/chezroot/nginx
+  Source: /Users/james/.local/share/chezroot/nginx
+  State:  /Users/james/.local/state/chezroot/nginx
+  Cache:  /Users/james/.cache/chezroot/cache/nginx
+```
+
+#### profile purge [profile...]
+
+Permanently delete all data associated with one or more profiles.
+
+This is a destructive operation. It will permanently delete the profile's **Source**,
+**Config**, **State**, and **Cache** directories and all their contents from your
+local disk. It will prompt for confirmation before deleting anything.
+
+**Options:**
+
+| Flag | Shorthand | Description |
+| ---- | --------- | ----------- |
+| --force | -f | Skips the confirmation prompt. |
+| --dry-run | -n | Prints the paths that would be deleted without actually deleting them. |
+
+**Example:**
+
+```shell
+$ chezroot profile purge nginx
+The following 4 directories and all their contents will be PERMANENTLY DELETED:
+  - /Users/james/.config/chezroot/nginx
+  - /Users/james/.local/share/chezroot/nginx
+  - /Users/james/.local/state/chezroot/nginx
+  - /Users/james/.cache/chezroot/cache/nginx
+Are you sure? [y/N] y
+info: Purged profile 'nginx'.
+```
+
 ## Passwordless sudo
 
 To avoid typing your password for every `apply` or `diff`, it is highly recommended
@@ -312,14 +377,20 @@ source directory, config file, persistent state file, and cache as follows:
 
 ### Configuration File
 
-The path to the configuration file passed to `chezmoi` is determined by the profile.
-The configuration file is loaded from the directory
-`$HOME/.config/chezroot/$PROFILE/`. The configuration file is named `config.$FORMAT`
-where format (following the same guidelines as `chezmoi`) is one of `json`, `jsonc`,
-`toml`, or `yaml`.
+The path to the configuration file passed to `chezmoi` is determined by the profile
+and loaded from `$HOME/.config/chezroot/$PROFILE/`.
 
-The user can not change the path to the configuration file. Use of the `chezmoi`
-command line options `-c`, `--config`, and `--config-format` are not allowed.
+Because `chezroot` must pass an explicit file path to `chezmoi` (using the `--config`
+flag internally), it automatically discovers the correct configuration file by
+searching that directory for `config.toml`, `config.json`, `config.yaml`, or
+`config.jsonc`.
+
+For this reason, the user cannot specify their own path. Use of the chezmoi command
+line options `-c`, `--config`, and `--config-format` are **not allowed**.
+
+To prevent ambiguity, it is an error to have more than one configuration file in a
+single profile directory. If `chezroot` finds both `config.toml` and `config.yaml`,
+for example, it will abort and report an error.
 
 ### Source Directory
 
@@ -419,8 +490,9 @@ template functions that read the target state (i.e, the `stat` function).
 
 Commands executed WITH `sudo` are:
 
-- add, apply, cat, destroy, diff, dump, execute-template, init, merge, merge-all,
-  purge, re-add, status, unmanaged, update, verify
+- add, apply, cat, destroy, diff, dump, execute-template, init (only when `--apply`
+  or `--one-shot` is used), merge, merge-all, purge, re-add, status, unmanaged,
+  update, verify
 
 Commands executed WITHOUT `sudo` are:
 
@@ -481,10 +553,6 @@ If `$HOME/.local/share/chezroot/$PROFILE/.chezmoiversion` does not exist, `chezr
 will create the file containing the minimal version required for `chezroot`. If the
 file exists, `chezroot` will ensure the version is compatible with the minimal
 version required.
-
-## Items to do
-
-Design a `chezroot profile` command to manage profiles.
 
 ## Acknowledgements
 
