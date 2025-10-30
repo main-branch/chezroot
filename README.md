@@ -41,9 +41,8 @@ documentation](https://www.google.com/search?q=https://www.chezmoi.io/docs/).
 - **Safe by Default:** `chezroot init` automatically creates a `.chezmoiignore` file
   that ignores everything. You must explicitly un-ignore the files you wish to
   manage.
-- **No External Library Dependencies:** `chezroot` is a single POSIX-compliant shell
-  script with no dependencies other than `chezmoi`, `sudo`, and common system
-  utilities (`bash`, `sed`)."
+- **No External Library Dependencies:** `chezroot` is a single binary written in Go
+  with no dependencies other than `chezmoi` and `sudo`.
 - **Cross-Platform:** Works seamlessly on both **Linux and macOS**.
 
 ## Platform Support
@@ -51,14 +50,13 @@ documentation](https://www.google.com/search?q=https://www.chezmoi.io/docs/).
 ### Linux and macOS
 
 `chezroot` is designed exclusively for POSIX-like systems (Linux and macOS) that use
-`sudo` for privilege escalation. It relies on `bash`, `sudo`, and standard Unix
-utilities to manage file ownership and drop privileges.
+`sudo` for privilege escalation.
 
 ### Windows (Not Supported)
 
 Windows is **not** a supported platform. The Windows administrative model (UAC, "Run
-as Administrator") is fundamentally different from `sudo`, and `chezroot`'s `bash`
-scripts are not compatible with PowerShell or the Windows filesystem.
+as Administrator") is fundamentally different from `sudo`. Thus `chezroot` is not
+compatible with PowerShell or the Windows filesystem.
 
 While `chezmoi` itself works perfectly on Windows, `chezroot` cannot be used to wrap
 it there.
@@ -163,7 +161,8 @@ $ chezroot -v apply
 
 ## Configuration
 
-`chezroot` is configured primarily via command-line options and environment variables.
+`chezroot` is configured primarily via command-line options and environment
+variables.
 
 ### Command-Line Options
 
@@ -193,8 +192,8 @@ $ chezroot -v apply
    Specifies the profile to use if the `--profile` option is not provided. This is a
    convenient way to work with a specific profile for an entire terminal session.
 
-   If neither the `--profile` option nor this variable are set, `chezroot` will use the
-   profile name `default`.
+   If neither the `--profile` option nor this variable are set, `chezroot` will use
+   the profile name `default`.
 
 ## Profiles
 
@@ -363,9 +362,9 @@ shared and can configure specific things within the host operating system. For
 example, one source might configure a webserver, another might configure system-wide
 shell settings, etc.
 
-The current profile is set at the command line with the `--profile` option or
-via the environment variable $CHEZROOT_PROFILE. If a profile is not specified, The
-profile `default` is used.
+The current profile is set at the command line with the `--profile` option or via the
+environment variable $CHEZROOT_PROFILE. If a profile is not specified, The profile
+`default` is used.
 
 Profiles are used to create isolation from each other. Each profile has its own
 source directory, config file, persistent state file, and cache as follows:
@@ -394,21 +393,23 @@ for example, it will abort and report an error.
 
 ### Source Directory
 
-The path to the source directory passed to `chezmoi` is also determined by the profile.
-The source directory is `$HOME/.local/share/chezroot/PROFILE/`.
+The path to the source directory passed to `chezmoi` is also determined by the
+profile. The source directory is `$HOME/.local/share/chezroot/PROFILE/`.
 
 The user cannot change the path to the source directory. Use of the `chezmoi` command
 line options `-S` and `--source-directory` are not allowed. If `sourceDir` is given
 in the configuration file, it is ignored.
 
-The source directory and its contents are assumed to be owned by the user
-invoking the `chezroot` command.
+The source directory and its contents are assumed to be owned by the user invoking
+the `chezroot` command.
 
 ### Destination Directory
 
 The destination directory path is set to "/".
 
-The user cannot change the destination directory path. Use of the `chezmoi` command line options `-D` and `--destination-directory` are not allowed. If `destDir` is given in the configuration file, it is ignored.
+The user cannot change the destination directory path. Use of the `chezmoi` command
+line options `-D` and `--destination-directory` are not allowed. If `destDir` is
+given in the configuration file, it is ignored.
 
 The destination files are assumed to be owned by root.
 
@@ -535,14 +536,14 @@ action must run as your normal user to access your editor and source files, but 
 
 ##### init
 
-`chezroot` will pass the option `--guess-repo-url=false` to `chezmoi init`. This option
-is passed as a safety measure to disable `chezmoi`'s default behavior of guessing a
-repository URL (like github.com/user/dotfiles). This ensures you explicitly provide
-the full URL for your *system-level* configuration, rather than accidentally using your
-*personal dotfiles* repository.
+`chezroot` will pass the option `--guess-repo-url=false` to `chezmoi init`. This
+option is passed as a safety measure to disable `chezmoi`'s default behavior of
+guessing a repository URL (like github.com/user/dotfiles). This ensures you
+explicitly provide the full URL for your *system-level* configuration, rather than
+accidentally using your *personal dotfiles* repository.
 
-`chezmoi init` will be run with `sudo` only if the `--apply` or `--one-shot` option is
-passed. In this case, `chezroot` will fix ownership after `sudo chezmoi init`
+`chezmoi init` will be run with `sudo` only if the `--apply` or `--one-shot` option
+is passed. In this case, `chezroot` will fix ownership after `sudo chezmoi init`
 completes.
 
 If `$HOME/.local/share/chezroot/$PROFILE/.chezmoiignore` does not exist, `chezroot`
@@ -556,8 +557,5 @@ version required.
 
 ## Acknowledgements
 
-- This tool is a simple wrapper and would not be possible without the excellent
+- This tool would not be possible without the amazing
   [chezmoi](https://www.chezmoi.io) by [Tom Payne](https://github.com/twpayne).
-- This project borrows from the excellent
-  [chezetc](https://github.com/SilverRainZ/chezetc) by [Shengyu
-  Zhang](https://github.com/SilverRainZ)
