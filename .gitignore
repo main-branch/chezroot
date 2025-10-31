@@ -1,0 +1,43 @@
+# ==============================================================================
+# Go
+# ==============================================================================
+# Compiled binaries (Linux/macOS)
+chezroot
+*.so
+*.dylib
+
+# A common directory for binaries
+/bin/
+
+# Test coverage
+coverage.*
+*.out
+
+# Go workspaces (local user file)
+go.work
+go.work.sum
+
+# ==============================================================================
+# Node.js (for dev tools)
+# ==============================================================================
+# This is the most important one!
+node_modules/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================================================================
+# Linux/macOS & Editor Files
+# ==============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+
+# Linux/Vim
+*~
+*.swp
+
+# IDEs
+.idea/ # JetBrains (GoLand, etc.)

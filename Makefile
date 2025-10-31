@@ -1,0 +1,72 @@
+# Makefile for the chezroot project
+#
+# This Makefile uses project-local dependencies defined in
+# go.mod (via tools.go) and package.json.
+
+.DEFAULT_GOAL := lint
+
+# Pin linter versions to those in go.mod
+GOLANGCI_LINT := go run github.com/golangci/golangci-lint/cmd/golangci-lint
+ACTIONLINT := go run github.com/rhysd/actionlint/cmd/actionlint
+
+# Define all task targets as .PHONY
+.PHONY: install-tools lint lint-fix lint-go lint-md lint-yaml lint-actions clean clean-all
+
+# ==============================================================================
+# Setup
+# ==============================================================================
+
+# install-tools: Install local npm dependencies
+install-tools:
+	@echo "--> Installing Node.js local dependencies..."
+	@npm install
+
+# ==============================================================================
+# Linting
+# ==============================================================================
+
+# lint: Run all linters
+lint: lint-go lint-md lint-yaml lint-actions
+	@echo "✅ All linters passed."
+
+# lint-fix: Automatically fix all fixable linting errors
+lint-fix:
+	@echo "--> Fixing all lintable files..."
+	@$(GOLANGCI_LINT) run --fix ./...
+	@npx eslint . --fix
+
+# lint-go: Run the Go linter
+lint-go:
+	@echo "--> Linting Go code..."
+	@$(GOLANGCI_LINT) run ./...
+
+# lint-md: Run the Markdown linter
+lint-md:
+	@echo "--> Linting Markdown files..."
+	@npx markdownlint-cli2 "**/*.md" "#node_modules" > /dev/null
+
+# lint-yaml: Run the YAML linter (using ESLint)
+lint-yaml:
+	@echo "--> Linting YAML files..."
+	@npx eslint .
+
+# lint-actions: Run the GitHub Actions linter
+lint-actions:
+	@echo "--> Linting GitHub Actions..."
+	@$(ACTIONLINT) -color
+
+# ==============================================================================
+# Cleaning
+# ==============================================================================
+
+# clean: Remove compiled binaries and test/coverage files
+clean:
+	@echo "--> Cleaning build artifacts..."
+	@rm -f chezroot
+	@rm -rf ./bin
+	@rm -f coverage.*
+
+# clean-all: Remove all generated files, including local dependencies
+clean-all: clean
+	@echo "--> Clobbering all dependencies..."
+	@rm -rf ./node_modules
