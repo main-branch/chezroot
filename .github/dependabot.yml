@@ -1,0 +1,27 @@
+---
+version: 2
+updates:
+  # Check for updates to npm packages (in package.json)
+  - package-ecosystem: npm
+    directory: / # Location of package.json
+    schedule:
+      interval: daily
+    # Group minor and patch updates into a single PR
+    groups:
+      npm-dev-deps:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+
+  # Check for updates to Go modules (in go.mod)
+  - package-ecosystem: gomod
+    directory: / # Location of go.mod
+    schedule:
+      interval: daily
+    groups:
+      go-dev-deps:
+        dependency-type: direct
+        update-types:
+          - minor
+          - patch
