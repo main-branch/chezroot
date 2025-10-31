@@ -31,8 +31,8 @@ ci: lint test build
 
 # install-tools: Install local npm dependencies
 install-tools:
-	@echo "--> Installing Node.js local dependencies..."
-	@npm install
+	@echo "--> Installing dependencies from lockfiles..."
+	@npm ci
 
 # ==============================================================================
 # Linting
@@ -97,4 +97,3 @@ clean:
 clean-all: clean
 	@echo "--> Clobbering all dependencies..."
 	@rm -rf ./node_modules
-	

@@ -19,13 +19,13 @@ jobs:
       - name: 2. Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.22"
+          go-version-file: "go.mod"
           cache: true
 
       - name: 3. Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version-file: 'package.json'
           cache: "npm"
 
       - name: 4. Install dependencies

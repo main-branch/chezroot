@@ -1,6 +1,6 @@
 module github.com/main-branch/chezroot
 
-go 1.25.2
+go 1.24.0
 
 require (
 	github.com/golangci/golangci-lint v1.64.8
