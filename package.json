@@ -9,6 +9,12 @@
   "devDependencies": {
     "markdownlint-cli2": "^0.13.0",
     "eslint": "^9.38.0",
-    "eslint-plugin-yml": "^1.19.0"
+    "eslint-plugin-yml": "^1.19.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "husky": "^9.1.7"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }
