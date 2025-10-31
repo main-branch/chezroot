@@ -15,23 +15,23 @@ rules:
   # Run `npx commitlint --print-config` to see the current setting for all
   # rules.
   #
-  header-max-length:      [2, always, 100]        # Header can not exceed 100 chars
+  header-max-length: [2, always, 100]        # Header can not exceed 100 chars
 
-  type-case:              [2, always, lower-case] # Type must be lower case
-  type-empty:             [2, never]              # Type must not be empty
+  type-case: [2, always, lower-case] # Type must be lower case
+  type-empty: [2, never]              # Type must not be empty
 
   # Supported conventional commit types
-  type-enum:              [2, always, [build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test]]
+  type-enum: [2, always, [build, ci, chore, docs, feat, fix, perf, refactor, revert, style, test]]
 
-  scope-case:             [2, always, lower-case] # Scope must be lower case
+  scope-case: [2, always, lower-case] # Scope must be lower case
 
   # Error if subject is one of these cases (encourages lower-case)
-  subject-case:           [2, never, [sentence-case, start-case, pascal-case, upper-case]]
-  subject-empty:          [2, never]              # Subject must not be empty
-  subject-full-stop:      [2, never, "."]         # Subject must not end with a period
+  subject-case: [2, never, [sentence-case, start-case, pascal-case, upper-case]]
+  subject-empty: [2, never]              # Subject must not be empty
+  subject-full-stop: [2, never, .]         # Subject must not end with a period
 
-  body-leading-blank:     [2, always]             # Body must have a blank line before it
-  body-max-line-length:   [2, always, 100]        # Body lines can not exceed 100 chars
+  body-leading-blank: [2, always]             # Body must have a blank line before it
+  body-max-line-length: [2, always, 100]        # Body lines can not exceed 100 chars
 
-  footer-leading-blank:   [2, always]             # Footer must have a blank line before it
+  footer-leading-blank: [2, always]             # Footer must have a blank line before it
   footer-max-line-length: [2, always, 100]        # Footer lines can not exceed 100 chars
