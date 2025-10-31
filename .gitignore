@@ -2,7 +2,7 @@
 # Go
 # ==============================================================================
 # Compiled binaries (Linux/macOS)
-chezroot
+/chezroot
 *.so
 *.dylib
 
