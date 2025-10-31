@@ -21,7 +21,7 @@ updates:
       interval: daily
     groups:
       go-dev-deps:
-        dependency-type: direct
+        dependency-type: development
         update-types:
           - minor
           - patch
