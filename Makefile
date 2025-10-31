@@ -10,7 +10,20 @@ GOLANGCI_LINT := go run github.com/golangci/golangci-lint/cmd/golangci-lint
 ACTIONLINT := go run github.com/rhysd/actionlint/cmd/actionlint
 
 # Define all task targets as .PHONY
-.PHONY: install-tools lint lint-fix lint-go lint-md lint-yaml lint-actions clean clean-all
+.PHONY: ci install-tools lint lint-fix lint-go lint-md lint-yaml lint-actions build test clean clean-all
+
+# ==============================================================================
+# CI (Continuous Integration)
+# ==============================================================================
+
+# ci: Run all checks required for CI
+ci: lint test build
+	@echo "--> Checking Go module tidy..."
+	@go mod tidy -v
+	@if ! git diff --exit-code -- go.mod go.sum; then \
+		echo "FAILURE: 'go mod tidy' resulted in changes. Please commit them."; \
+		exit 1; \
+	fi
 
 # ==============================================================================
 # Setup
@@ -56,6 +69,20 @@ lint-actions:
 	@$(ACTIONLINT) -color
 
 # ==============================================================================
+# Build & Test
+# ==============================================================================
+
+# build: Compile the Go application
+build:
+	@echo "--> Building Go binary..."
+	@go build -v ./...
+
+# test: Run all Go tests
+test:
+	@echo "--> Running Go tests..."
+	@go test -v -race ./...
+
+# ==============================================================================
 # Cleaning
 # ==============================================================================
 
@@ -70,3 +97,4 @@ clean:
 clean-all: clean
 	@echo "--> Clobbering all dependencies..."
 	@rm -rf ./node_modules
+	
