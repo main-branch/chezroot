@@ -56,7 +56,7 @@ lint-go:
 # lint-md: Run the Markdown linter
 lint-md:
 	@echo "--> Linting Markdown files..."
-	@npx markdownlint-cli2 "**/*.md" "#node_modules" > /dev/null
+	@npx markdownlint-cli2 "**/*.md" "#node_modules" "#CHANGELOG.md" > /dev/null
 
 # lint-yaml: Run the YAML linter (using ESLint)
 lint-yaml:
