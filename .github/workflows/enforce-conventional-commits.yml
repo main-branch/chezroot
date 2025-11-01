@@ -13,8 +13,8 @@ jobs:
   commit-lint:
     name: Verify Conventional Commits
 
-    # Skip this job if this is a release PR
-    if: (github.event_name == 'pull_request' && !startsWith(github.event.pull_request.head.ref, 'release-please--'))
+    # Skip this job if this is a release or dependabot PR
+    if: (github.event_name == 'pull_request' && !startsWith(github.event.pull_request.head.ref, 'release-please--') && github.actor != 'dependabot[bot]')
 
     runs-on: ubuntu-latest
 
