@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/main-branch/chezroot/compare/v0.1.3...v0.1.4) (2025-11-01)
+
+
+### Other Changes
+
+* Cleanup release.yml ([08e39fa](https://github.com/main-branch/chezroot/commit/08e39faf65386743e67400f372937db447ed567b))
+
 ## [0.1.3](https://github.com/main-branch/chezroot/compare/v0.1.2...v0.1.3) (2025-11-01)
 
 
