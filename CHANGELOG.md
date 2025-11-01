@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/main-branch/chezroot/compare/v0.1.2...v0.1.3) (2025-11-01)
+
+
+### Other Changes
+
+* **release:** Implement decoupled Homebrew tap update ([1c50363](https://github.com/main-branch/chezroot/commit/1c5036304cf7e0177f3936b95fd44282be93775d))
+
 ## [0.1.2](https://github.com/main-branch/chezroot/compare/v0.1.1...v0.1.2) (2025-11-01)
 
 
