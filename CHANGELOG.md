@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/main-branch/chezroot/compare/v0.1.1...v0.1.2) (2025-11-01)
+
+
+### Other Changes
+
+* Add homebrew-tap update to release-please config ([88d8700](https://github.com/main-branch/chezroot/commit/88d8700a85adbd46c8d4ce6492c7a6a46750f35c))
+* Revert npm version to 0.0.1 and remove extra-files from release-please config ([fe8da7b](https://github.com/main-branch/chezroot/commit/fe8da7bfcffc07221d41044418e4bdaea7927f61))
+
 ## [0.1.1](https://github.com/main-branch/chezroot/compare/v0.1.0...v0.1.1) (2025-11-01)
 
 
