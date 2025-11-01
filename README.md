@@ -70,7 +70,7 @@ Installation is handled by a package manager appropriate for your platform.
 You can install `chezroot` from the official Homebrew tap:
 
 ```bash
-brew tap jcouball/tap
+brew tap main-branch/tap
 brew install chezroot
 ```
 

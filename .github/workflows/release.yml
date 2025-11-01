@@ -1,21 +1,60 @@
 ---
 name: Release Please
 
+permissions:
+  contents: write # For release-please (create PR, release, tag)
+  pull-requests: write # For release-please (create PR)
+  actions: write # For gh workflow run (to update homebrew package)
+
 on:
   push:
     branches: ["main"]
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
-  release-please:
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
+
     steps:
-      - name: Run Release Please
+      - name: Secure runner
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            storage.googleapis.com:443
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        # Fetch all history for all tags and branches
+        with:
+          fetch-depth: 0
+
+      - name: Create release
         uses: googleapis/release-please-action@v4
+        id: release # Add this ID
         with:
           token: ${{ secrets.AUTO_RELEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # --- This is the new step you need to add ---
+      - name: Update homebrew-tap
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_RELEASE_TOKEN }}
+          RAW_TAG_NAME: ${{ steps.release.outputs.tag_name }}
+          SOURCE_REPO_PATH: ${{ github.repository }}
+          FORMULA_NAME: "chezroot" # Set this to your formula name
+
+        run: |
+          set -e
+          version=${RAW_TAG_NAME#v} # Removes 'v' prefix
+          echo "Running 'release.yml' in main-branch/homebrew-tap with version: ${version}"
+          gh workflow run release.yml \
+            -f formula_name="${FORMULA_NAME}" \
+            -f version="${version}" \
+            -f source_repository_path="${SOURCE_REPO_PATH}" \
+            -R main-branch/homebrew-tap
