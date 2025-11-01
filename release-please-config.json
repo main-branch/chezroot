@@ -5,9 +5,6 @@
       "release-type": "go",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "extra-files": [
-        "package.json"
-      ],
       "changelog-path": "CHANGELOG.md",
       "draft": false,
       "prerelease": false,
