@@ -7,8 +7,8 @@
     "node": ">=24.0.0"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^0.13.0",
-    "eslint": "^9.38.0",
+    "markdownlint-cli2": "^0.18.1",
+    "eslint": "^9.39.0",
     "eslint-plugin-yml": "^1.19.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
