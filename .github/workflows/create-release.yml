@@ -1,5 +1,5 @@
 ---
-name: Prepare Release
+name: Create Release
 
 permissions:
   contents: write # For release-please (create PR, release, tag)
@@ -10,8 +10,8 @@ on:
     branches: ["main"]
 
 jobs:
-  release:
-    name: Prepare Release
+  create-release:
+    name: Create Release
     runs-on: ubuntu-latest
 
     steps:
@@ -26,11 +26,11 @@ jobs:
             storage.googleapis.com:443
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Prepare release
+      - name: Define release
         uses: googleapis/release-please-action@v4 # Using the correct path
         id: release
         with:

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+---
+version: 2
+
+project_name: chezroot
+
+builds:
+  - id: chezroot
+    main: ./cmd/chezroot/
+    binary: chezroot
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+# Use archives defaults
+# archives: []
+
+# Use checksum defaults
+checksum: {}
+
+# Use snapshot defaults
+snapshot: {}
+
+# release-please generates the CHANGELOG.md
+changelog: {disable: true}

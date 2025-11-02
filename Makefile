@@ -8,6 +8,7 @@
 # Pin linter versions to those in go.mod
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/cmd/golangci-lint
 ACTIONLINT := go run github.com/rhysd/actionlint/cmd/actionlint
+GORELEASER := go run github.com/goreleaser/goreleaser/v2
 
 # Define all task targets as .PHONY
 .PHONY: ci install-tools lint lint-fix lint-go lint-md lint-yaml lint-actions build test clean clean-all
@@ -39,7 +40,7 @@ install-tools:
 # ==============================================================================
 
 # lint: Run all linters
-lint: lint-go lint-md lint-yaml lint-actions
+lint: lint-go lint-md lint-yaml lint-actions lint-goreleaser
 	@echo "✅ All linters passed."
 
 # lint-fix: Automatically fix all fixable linting errors
@@ -67,6 +68,11 @@ lint-yaml:
 lint-actions:
 	@echo "--> Linting GitHub Actions..."
 	@$(ACTIONLINT) -color
+
+# lint-goreleaser: Run the GoReleaser config check
+lint-goreleaser:
+	@echo "--> Linting GoReleaser config..."
+	@$(GORELEASER) check --quiet
 
 # ==============================================================================
 # Build & Test
