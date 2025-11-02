@@ -3,12 +3,9 @@
   "packages": {
     ".": {
       "release-type": "go",
-      "homebrew-tap": "main-branch/homebrew-tap",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
       "changelog-path": "CHANGELOG.md",
-      "draft": false,
-      "prerelease": false,
       "include-component-in-tag": false,
       "pull-request-title-pattern": "chore: release v${version}",
       "changelog-sections": [
