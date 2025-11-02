@@ -1,0 +1,39 @@
+---
+name: Prepare Release
+
+permissions:
+  contents: write # For release-please (create PR, release, tag)
+  pull-requests: write # For release-please (create PR)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Secure runner
+        uses: step-security/harden-runner@v2.11.1 # Pinning to latest known good version
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            storage.googleapis.com:443
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare release
+        uses: googleapis/release-please-action@v4 # Using the correct path
+        id: release
+        with:
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }} # You need to ensure this secret exists and has permissions
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
