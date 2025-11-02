@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/main-branch/chezroot/compare/v0.1.4...v0.1.5) (2025-11-02)
+
+
+### Other Changes
+
+* Do not publish to homebrew tap ([cbe63b1](https://github.com/main-branch/chezroot/commit/cbe63b10f4e7c96f20a04a4272074e3124e6754a))
+
 ## [0.1.4](https://github.com/main-branch/chezroot/compare/v0.1.3...v0.1.4) (2025-11-01)
 
 
