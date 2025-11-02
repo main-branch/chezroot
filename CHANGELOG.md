@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/main-branch/chezroot/compare/v0.1.5...v0.1.6) (2025-11-02)
+
+
+### Other Changes
+
+* Add a workflow to publish release artifacts with goreleaser ([f4f94ad](https://github.com/main-branch/chezroot/commit/f4f94ad42923ba04b47eabdc713e5dbda811c7fb))
+
 ## [0.1.5](https://github.com/main-branch/chezroot/compare/v0.1.4...v0.1.5) (2025-11-02)
 
 
