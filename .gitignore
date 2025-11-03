@@ -41,3 +41,5 @@ yarn-error.log*
 
 # IDEs
 .idea/ # JetBrains (GoLand, etc.)
+
+.husky/_
