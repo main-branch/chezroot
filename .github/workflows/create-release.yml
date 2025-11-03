@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Secure runner
-        uses: step-security/harden-runner@v2.11.1 # Pinning to latest known good version
+        uses: step-security/harden-runner@v2.11.1
         with:
           disable-sudo: true
           egress-policy: block
@@ -31,9 +31,9 @@ jobs:
           fetch-depth: 0
 
       - name: Define release
-        uses: googleapis/release-please-action@v4 # Using the correct path
+        uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.AUTO_RELEASE_TOKEN }} # You need to ensure this secret exists and has permissions
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
