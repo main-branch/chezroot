@@ -26,3 +26,33 @@ snapshot: {}
 
 # release-please generates the CHANGELOG.md
 changelog: {disable: true}
+
+notarize:
+  macos:
+    - enabled: true
+
+      # The ID of the build to notarize. This must match the 'id'
+      # from your 'builds' section above.
+      ids: [chezroot]
+
+      sign:
+        # The .p12 certificate file, base64-encoded
+        # Stored in GitHub Secrets as MACOS_SIGN_P12_BASE64
+        certificate: '{{ .Env.MACOS_SIGN_P12_BASE64 }}'
+
+        # The password for the .p12 certificate
+        # Stored in GitHub Secrets as MACOS_SIGN_P12_PASSWORD
+        password: '{{ .Env.MACOS_SIGN_P12_PASSWORD }}'
+
+      notarize:
+        # Your Apple Connect API Key Issuer ID (a UUID)
+        # Stored in GitHub Secrets as MACOS_NOTARY_ISSUER_ID
+        issuer_id: '{{ .Env.MACOS_NOTARY_ISSUER_ID }}'
+
+        # Your Apple Connect API Key ID (e.g., A1B2C3D4E5)
+        # Stored in GitHub Secrets as MACOS_NOTARY_KEY_ID
+        key_id: '{{ .Env.MACOS_NOTARY_KEY_ID }}'
+
+        # The .p8 key file, base64-encoded
+        # Stored in GitHub Secrets as MACOS_NOTARY_KEY_BASE64
+        key: '{{ .Env.MACOS_NOTARY_KEY_BASE64 }}'
