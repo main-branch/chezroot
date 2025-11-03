@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/main-branch/chezroot/compare/v0.1.6...v0.1.7) (2025-11-03)
+
+
+### Other Changes
+
+* Add notarization configuration for macOS builds ([9c18828](https://github.com/main-branch/chezroot/commit/9c188288b2b76cbb2b7cf497bb30f86d47400f67))
+
 ## [0.1.6](https://github.com/main-branch/chezroot/compare/v0.1.5...v0.1.6) (2025-11-02)
 
 
