@@ -29,8 +29,89 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MACOS_SIGN_P12_BASE64: ${{ secrets.MACOS_SIGN_P12_BASE64 }}
-          MACOS_SIGN_P12_PASSWORD: ${{ secrets.MACOS_SIGN_P12_PASSWORD }}
-          MACOS_NOTARY_ISSUER_ID: ${{ secrets.MACOS_NOTARY_ISSUER_ID }}
-          MACOS_NOTARY_KEY_ID: ${{ secrets.MACOS_NOTARY_KEY_ID }}
-          MACOS_NOTARY_KEY_BASE64: ${{ secrets.MACOS_NOTARY_KEY_BASE64 }}
+
+      - name: Copy formula template to dist
+        run: cp .github/homebrew/chezroot.rb.tpl dist/
+
+      # This uploads the 'dist' folder (with the checksums file)
+      # so the next job can access it.
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-artifacts
+          path: dist/
+
+  update-homebrew-tap:
+    name: Update Homebrew Tap
+    # Only run after the 'goreleaser' job is successful
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: release-artifacts
+          path: dist
+
+      - name: Generate formula file
+        id: generate-formula
+        run: |
+          # Read data from metadata.json and export as environment variables
+          METADATA_FILE="dist/metadata.json"
+
+          TAG=$(jq -r .tag "$METADATA_FILE")
+          export TAG
+          VERSION=$(jq -r .version "$METADATA_FILE")
+          export VERSION
+
+          # Read data from checksums.txt and export
+          CHECKSUMS_FILE="dist/chezroot_${VERSION}_checksums.txt"
+          SHA_AMD64=$(grep 'darwin_amd64.tar.gz' "$CHECKSUMS_FILE" | awk '{ print $1 }')
+          export SHA_AMD64
+          SHA_ARM64=$(grep 'darwin_arm64.tar.gz' "$CHECKSUMS_FILE" | awk '{ print $1 }')
+          export SHA_ARM64
+
+          # Check if we got the SHAs
+          if [ -z "$SHA_AMD64" ] || [ -z "$SHA_ARM64" ]; then
+            echo "Error: Could not extract checksums."
+            exit 1
+          fi
+
+          TEMPLATE_FILE="dist/chezroot.rb.tpl"
+          GENERATED_FILE="dist/chezroot.rb"
+          envsubst < "$TEMPLATE_FILE" > "$GENERATED_FILE"
+
+          echo "--- Generated Formula Content ---"
+          cat $GENERATED_FILE
+          echo "---------------------------------"
+
+          # Pass tag for the commit message
+          echo "TAG=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Check out homebrew-tap
+        uses: actions/checkout@v5
+        with:
+          repository: main-branch/homebrew-tap
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update the tap
+        run: |
+          # Move the newly generated formula into the tap repository
+          mv dist/chezroot.rb homebrew-tap/Formula/chezroot.rb
+
+          cd homebrew-tap
+
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Formula/chezroot.rb
+
+          # Commit and push if there are changes
+          if ! git diff --staged --quiet; then
+            git commit -m "Update chezroot formula to version ${{ steps.generate-formula.outputs.TAG }}"
+            git push
+          else
+            echo "No changes to commit. Formula is already up-to-date."
+          fi
