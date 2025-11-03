@@ -21,11 +21,12 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
+          cache-dependency-path: "go.sum"
 
       - name: 3. Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: 'package.json'
+          node-version-file: "package.json"
           cache: "npm"
 
       - name: 4. Install dependencies
