@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.10](https://github.com/main-branch/chezroot/compare/v0.1.9...v0.1.10) (2025-11-03)
+
+
+### Bug Fixes
+
+* Add cache configuration for Go setup in CI workflows ([6092528](https://github.com/main-branch/chezroot/commit/6092528e5d23a14fb9cc78ed8baf4c373aabcaa4))
+
+
+### Other Changes
+
+* Remove notarization configuration from goreleaser ([9c6499d](https://github.com/main-branch/chezroot/commit/9c6499d038330168446699aa811331be984188b1))
+
 ## [0.1.9](https://github.com/main-branch/chezroot/compare/v0.1.8...v0.1.9) (2025-11-03)
 
 
