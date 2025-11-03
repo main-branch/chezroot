@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/main-branch/chezroot/compare/v0.1.8...v0.1.9) (2025-11-03)
+
+
+### Features
+
+* Publish chezroot to the main-branch/homebrew-tap ([17516a9](https://github.com/main-branch/chezroot/commit/17516a99c945c364a442282d6d9d9a5099871848))
+
 ## [0.1.8](https://github.com/main-branch/chezroot/compare/v0.1.7...v0.1.8) (2025-11-03)
 
 
