@@ -98,8 +98,11 @@ clean:
 	@rm -f chezroot
 	@rm -rf ./bin
 	@rm -f coverage.*
+	@rm -f *.out
+	@rm -rf ./dist
 
 # clean-all: Remove all generated files, including local dependencies
 clean-all: clean
 	@echo "--> Clobbering all dependencies..."
 	@rm -rf ./node_modules
+	@rm -rf ./.husky/_
