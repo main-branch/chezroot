@@ -56,3 +56,9 @@ notarize:
         # The .p8 key file, base64-encoded
         # Stored in GitHub Secrets as MACOS_NOTARY_KEY_BASE64
         key: '{{ .Env.MACOS_NOTARY_KEY_BASE64 }}'
+
+        # Wait for the notarization to finish... this could take a long time
+        wait: true
+
+        # Timeout for the notarization (only if `wait` is true)
+        timeout: 20m
