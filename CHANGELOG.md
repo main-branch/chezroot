@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/main-branch/chezroot/compare/v0.1.7...v0.1.8) (2025-11-03)
+
+
+### Other Changes
+
+* Wait for chezroot notarization to complete before publishing ([83b2834](https://github.com/main-branch/chezroot/commit/83b2834fbd9bdf85b463dbf4dc2e9f5d11cf1484))
+
 ## [0.1.7](https://github.com/main-branch/chezroot/compare/v0.1.6...v0.1.7) (2025-11-03)
 
 
