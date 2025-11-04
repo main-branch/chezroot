@@ -81,7 +81,7 @@ lint-goreleaser:
 # build: Compile the Go application
 build:
 	@echo "--> Building Go binary..."
-	@go build -v ./...
+	@go build -v -o chezroot .
 
 # test: Run all Go tests
 test:
