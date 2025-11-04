@@ -1,6 +1,6 @@
 class Chezroot < Formula
   desc "A sudo wrapper for chezmoi to manage root-owned files"
-  homepage "https.github.com/main-branch/chezroot"
+  homepage "https://github.com/main-branch/chezroot"
   # This section will be for the Intel (amd64) binary
   url "https://github.com/main-branch/chezroot/releases/download/${TAG}/chezroot_${VERSION}_darwin_amd64.tar.gz"
   sha256 "${SHA_AMD64}"
