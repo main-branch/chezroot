@@ -3,7 +3,7 @@
 # This Makefile uses project-local dependencies defined in
 # go.mod (via tools.go) and package.json.
 
-.DEFAULT_GOAL := lint
+.DEFAULT_GOAL := ci
 
 # Pin linter versions to those in go.mod
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/cmd/golangci-lint
