@@ -6,7 +6,7 @@ project_name: chezroot
 
 builds:
   - id: chezroot
-    main: ./cmd/chezroot/
+    main: .
     binary: chezroot
     goos:
       - linux
