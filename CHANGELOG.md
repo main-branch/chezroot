@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.11](https://github.com/main-branch/chezroot/compare/v0.1.10...v0.1.11) (2025-11-04)
+
+
+### Bug Fixes
+
+* Update Homebrew formula template and Makefile for proper installation ([9ac2a5b](https://github.com/main-branch/chezroot/commit/9ac2a5b2b1893df14cc0e746622a421253eacda8))
+
+
+### Other Changes
+
+* Change Makefile default goal from lint to ci ([d24b412](https://github.com/main-branch/chezroot/commit/d24b41244fe9e62af2db27169f1eaa46641b1e72))
+* **deps-dev:** Bump eslint in the npm-dev-deps group ([99876b6](https://github.com/main-branch/chezroot/commit/99876b67974a0ab0203b353a8e6fbd2094afe61c))
+* Update .gitignore and Makefile to include husky directory in clean tasks ([b82bde9](https://github.com/main-branch/chezroot/commit/b82bde9de6355c129b88e644267f57d78da53eb3))
+
 ## [0.1.10](https://github.com/main-branch/chezroot/compare/v0.1.9...v0.1.10) (2025-11-03)
 
 
