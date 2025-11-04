@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/main-branch/chezroot/compare/v0.1.11...v0.1.12) (2025-11-04)
+
+
+### Bug Fixes
+
+* Correct main path in goreleaser config ([f465052](https://github.com/main-branch/chezroot/commit/f4650520c723682478200baa274981bd85d5bec3))
+
 ## [0.1.11](https://github.com/main-branch/chezroot/compare/v0.1.10...v0.1.11) (2025-11-04)
 
 
