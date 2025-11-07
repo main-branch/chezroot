@@ -2,6 +2,8 @@
 #
 # This Makefile uses project-local dependencies defined in
 # go.mod (via tools.go) and package.json.
+#
+# List available targets using `make help`
 
 .DEFAULT_GOAL := ci
 
