@@ -19,7 +19,7 @@ contributions can be merged smoothly.
 
 Here are the most important guidelines:
 
-- **Prerequisites:**: You must have Go, Node, and NPM already installed.
+- **Prerequisites:** You must have Go (>= 1.25.1), Node.js (>= 24), and npm installed.
 - **One-Time Setup:** Run `make install-tools` after cloning to install all
   development dependencies and Git hooks.
 - **Conventional Commits:** All commit messages *must* follow the Conventional
@@ -29,10 +29,12 @@ Here are the most important guidelines:
   tests.
 - **Update Documentation:** Any change that impacts users (new features, flags, etc.)
   **must** be documented appropriately
-- **Pass CI Locally:** Before submitting a pull request, you should run `make ci`
-  and ensure all checks (linting, testing, building) pass.
+- **Ensure CI passes locally:** Before submitting a pull request, run `make ci` and
+  ensure all checks (linting, testing, building) pass. Note: this will fail if
+  `go mod tidy` makes changes to `go.mod` or `go.sum`; commit those changes.
 - **Rebase Workflow:** Always work on a new branch. Your pull request **must be
-  rebased** on the latest `main` branch before it will be merged via fast-forward.
+  rebased** on the latest `main` branch before it will be merged with a
+  fast-forward merge.
 
 ## Code of Conduct
 
@@ -83,14 +85,18 @@ make install-tools
 This command will:
 
 1. Run `npm ci`, which installs all Node.js-based development tools (linters, commit
-   hooks) from the `package-lock.json` file.
+  hooks) from the [package-lock.json](package-lock.json) file.
 
-2. Run the `prepare` script in `package.json`, which uses Husky to set up the
-   `commit-msg` Git hook.
+2. Run the `prepare` script in [package.json](package.json), which uses Husky to set up the
+  `commit-msg` Git hook ([.husky/commit-msg](.husky/commit-msg)).
 
 The Go-based development tools (`golangci-lint`, `actionlint`, `goreleaser`) are
-managed via `go.mod` and will be run using `go run` via the `Makefile`. You do not
-need to install them globally.
+managed via [go.mod](go.mod) and invoked with `go run` via the
+[Makefile](Makefile). You do not need to install them globally.
+
+If you later pull changes that modify
+[package-lock.json](package-lock.json), re-run `make install-tools` to keep local
+development tooling in sync.
 
 ### Editor Setup (VS Code)
 
@@ -101,9 +107,9 @@ extensions:
 - **ESLint:** `dbaeumer.vscode-eslint`
 - **Markdownlint:** `DavidAnson.vscode-markdownlint`
 
-This repository includes a `.vscode/settings.json` file that will automatically
+This repository includes a [.vscode/settings.json](.vscode/settings.json) file that will automatically
 configure these extensions to use the project's rules (e.g., formatting your YAML
-files on save to match our `eslint.config.js` rules).
+files on save to match our [eslint.config.js](eslint.config.js) rules).
 
 ## Development Workflow
 
@@ -121,26 +127,15 @@ This command runs the full suite of linters, tests, builds the binary, and check
 that your Go modules are tidy. This is the exact same command our GitHub workflow
 uses.
 
+Note: the CI check will fail if `go mod tidy` results in changes to
+[go.mod](go.mod) or [go.sum](go.sum). If that happens locally, please commit those
+changes in your branch before
+opening or updating a pull request.
+
 ### Other Useful Commands
 
-- **`make build`**: Compiles the `chezroot` Go binary.
-- **`make test`**: Runs all Go tests.
-- **`make lint`**: Runs all linters.
-- **`make lint-fix`**: Automatically fixes any fixable errors found by
-  `golangci-lint` and `eslint`.
-- **`make clean-all`**: "Clobbers" the workspace by removing all build artifacts and
-  installed dependencies (`node_modules`, etc.).
-
-### Our Linters
-
-The `make lint` command runs a comprehensive suite of linters for every language in
-this project:
-
-- **Go:** `golangci-lint`
-- **Markdown:** `markdownlint-cli2` (configured by `.markdownlint.yml`)
-- **YAML:** `eslint-plugin-yml` (configured by `eslint.config.js`)
-- **GitHub Actions:** `actionlint`
-- **GoReleaser Config:** `goreleaser check` (configured by `.goreleaser.yml`)
+Run `make help` to see all available development targets (from the
+[Makefile](Makefile)) and their descriptions.
 
 ## Submitting Changes
 
@@ -149,13 +144,16 @@ this project:
 This project uses **Conventional Commits**. This format is strictly enforced by a Git
 hook and our CI pipeline.
 
+For the full specification and examples, see the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) website.
+
 After running `make install-tools`, a `commit-msg` hook is installed that
 automatically lints your commit message with `commitlint`.
 
 - Your commit message **must** follow the format: `<type>(<scope>): <subject>`.
 - Allowed types are: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
   `build`, `ci`, `chore`, `revert`.
-- For details on all rules, see `.commitlintrc.yml`.
+- For details on all rules, see [./.commitlintrc.yml](./.commitlintrc.yml).
 
 **Examples:**
 
@@ -174,7 +172,8 @@ automatically lints your commit message with `commitlint`.
         corresponding tests.
 
       - **Documentation must be updated:** Any change that impacts user behavior (new
-        commands, flags, or profile changes) must be documented in the README.md.
+        commands, flags, or profile changes) must be documented in the
+        [README.md](README.md).
 
 3. Ensure your code passes all local checks by running `make ci`.
 4. Rebase your branch on the latest `main`:
@@ -182,6 +181,13 @@ automatically lints your commit message with `commitlint`.
     ```bash
     git fetch upstream
     git rebase upstream/main
+    ```
+
+    If you encounter conflicts during the rebase, resolve them and continue:
+
+    ```bash
+    git add <files>
+    git rebase --continue
     ```
 
 5. Push your branch and open a pull request against `main-branch/chezroot:main`.
@@ -192,17 +198,21 @@ automatically lints your commit message with `commitlint`.
 We use a set of GitHub Actions to automate linting, testing, and releases.
 
 - **Continuous Integration:** On every pull request,
-  `.github/workflows/continuous-integration.yml` runs `make ci` to ensure all tests
-  and linters pass.
+  [.github/workflows/continuous-integration.yml](.github/workflows/continuous-integration.yml)
+  runs `make ci` to ensure all tests and linters pass.
 - **Conventional Commits:** The
-  `.github/workflows/enforce-conventional-commits.yml` workflow lints all commit
-  messages in the pull request.
-- **Dependency Updates:** `dependabot.yml` is configured to open pull requests for
-  Go and npm dependency updates.
+  [.github/workflows/enforce-conventional-commits.yml](.github/workflows/enforce-conventional-commits.yml)
+  workflow lints all commit messages in the pull request.
+- **Dependency Updates:**
+  [.github/dependabot.yml](.github/dependabot.yml) is configured to open pull
+  requests for Go and npm dependency updates.
 - **Release Automation:**
   1. When a pull request is merged to `main`,
-     `.github/workflows/create-release.yml` runs `release-please` to open (or
-     update) a "Release PR" with the new version and `CHANGELOG.md`.
+     [.github/workflows/create-release.yml](.github/workflows/create-release.yml)
+     runs `release-please` to open (or update) a "Release PR" with the new version
+     and [CHANGELOG.md](CHANGELOG.md).
   2. When that "Release PR" is merged, a new version tag is created.
-  3. This tag triggers `.github/workflows/publish-release.yml`, which uses
-     `goreleaser` to build binaries, upload them, and update the Homebrew tap.
+  3. This tag triggers
+     [.github/workflows/publish-release.yml](.github/workflows/publish-release.yml),
+     which uses `goreleaser` to build binaries, upload them, and update the
+     Homebrew tap.
