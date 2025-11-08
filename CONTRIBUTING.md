@@ -12,6 +12,7 @@ contributions can be merged smoothly.
 - [Getting Started](#getting-started)
 - [Development Environment Setup](#development-environment-setup)
 - [Development Workflow](#development-workflow)
+- [Testing \& Coverage](#testing--coverage)
 - [Submitting Changes](#submitting-changes)
 - [Automation Pipeline](#automation-pipeline)
 
@@ -136,6 +137,126 @@ opening or updating a pull request.
 
 Run `make help` to see all available development targets (from the
 [Makefile](Makefile)) and their descriptions.
+
+## Testing & Coverage
+
+This project enforces **100% statement coverage** to maintain code quality and ensure
+all code paths are tested.
+
+### Coverage Requirement
+
+All contributions must maintain 100% statement coverage. The CI pipeline will
+automatically fail if coverage drops below this threshold.
+
+### Running Tests Locally
+
+```bash
+# Run all tests with race detection
+make test
+
+# Run tests with coverage and see the summary
+make coverage
+
+# Generate an interactive HTML coverage report
+make coverage-html
+open coverage.html
+
+# Verify 100% coverage (same check used in CI)
+make coverage-check
+```
+
+### Understanding Coverage
+
+Go's coverage tooling measures **statement coverage**, not branch coverage:
+
+- **Statement coverage** = whether each executable statement was run by tests
+- **Branch coverage** = whether each branch (true/false) of conditionals was tested
+  (not measured by Go's tooling)
+
+The HTML report shows:
+
+- **Green** = covered by tests
+- **Red** = NOT covered (needs tests added)
+- **Gray** = not executable (comments, declarations)
+
+### Adding Tests for New Code
+
+When adding new features or fixing bugs:
+
+1. Write tests that cover all new code paths
+2. Run `make coverage-check` to verify 100% coverage
+3. If coverage is below 100%, use `make coverage-html` to identify uncovered lines
+4. Add tests for the uncovered statements
+
+### Viewing Coverage Reports
+
+#### Locally
+
+Generate and view an interactive HTML coverage report:
+
+```bash
+make coverage-html
+open coverage.html
+```
+
+#### From CI Runs
+
+Every CI workflow run generates a coverage report artifact that you can download:
+
+1. Go to your pull request on GitHub
+2. Click on the "Checks" tab
+3. Click on a workflow run (e.g., "Build and Test")
+4. Scroll to the "Artifacts" section at the bottom
+5. Download the `coverage-report` artifact (retained for 30 days)
+6. Extract the zip file and open `coverage.html` in your browser
+
+This is useful for reviewing coverage on other contributors' PRs or checking
+historical coverage reports.
+
+### Common Patterns for Testability
+
+The codebase follows these patterns to enable testing:
+
+- **Extract testable functions:** Separate logic from I/O (see `main.go` → `run()`)
+- **Dependency injection:** Pass dependencies as parameters (see `ExecuteChezmoiWithRunner`)
+- **Interface-based testing:** Use interfaces for external dependencies (see `CommandRunner`)
+- **Exit hooks:** Use function variables for `os.Exit()` to avoid terminating tests
+
+Example from `main.go`:
+
+```go
+// Extracted function is testable without calling os.Exit
+func run(args []string) int {
+    exitCode, err := ExecuteChezmoi(args, false)
+    if err != nil {
+        os.Stderr.WriteString(err.Error() + "\n")
+        return 1
+    }
+    return exitCode
+}
+
+// Hook allows tests to intercept exit
+var exitFunc = os.Exit
+
+func main() {
+    code := run(os.Args[1:])
+    exitFunc(code)
+}
+```
+
+### CI Integration
+
+The `make ci` command includes `coverage-check`:
+
+```bash
+make ci  # Runs: lint + coverage-check + build + go mod tidy check
+```
+
+Your pull request will fail if:
+
+- Any tests fail
+- Coverage drops below 100%
+- Linting errors exist
 
 ## Submitting Changes
 
