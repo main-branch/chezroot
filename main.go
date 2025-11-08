@@ -4,19 +4,25 @@ import (
 	"os"
 )
 
+// run is an extraction of main logic for testability. It returns the exit code
+// that should be used by the process. Any error from ExecuteChezmoi is mapped
+// to exit code 1 after writing its message to stderr.
+func run(args []string) int {
+	exitCode, err := ExecuteChezmoi(args, false)
+	if err != nil {
+		os.Stderr.WriteString(err.Error() + "\n")
+		return 1
+	}
+	return exitCode
+}
+
+// exitFunc is a hook to allow tests to intercept process exit without terminating
+// the test binary. It defaults to os.Exit.
+var exitFunc = os.Exit
+
 func main() {
 	// Get command line arguments (excluding the program name itself)
 	args := os.Args[1:]
-
-	// For now, always pass useSudo as false as per issue #42
-	exitCode, err := ExecuteChezmoi(args, false)
-
-	if err != nil {
-		// Print error to stderr and exit with failure code
-		os.Stderr.WriteString(err.Error() + "\n")
-		os.Exit(1)
-	}
-
-	// Exit with the same code that chezmoi returned
-	os.Exit(exitCode)
+	code := run(args)
+	exitFunc(code)
 }

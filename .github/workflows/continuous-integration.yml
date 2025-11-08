@@ -34,3 +34,11 @@ jobs:
 
       - name: 5. Run CI checks
         run: make ci
+
+      - name: 6. Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.html
+          retention-days: 30

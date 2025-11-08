@@ -20,7 +20,9 @@ GORELEASER := go run github.com/goreleaser/goreleaser/v2
 # ==============================================================================
 
 # ci: Run all checks required for CI
-ci: lint test build ## Run all checks required for CI (lint, test, build, tidy check)
+ci: lint coverage-check build ## Run all checks required for CI (lint, coverage=100%, build, tidy check)
+	@echo "--> Generating HTML coverage report..."
+	@go tool cover -html=coverage.out -o coverage.html
 	@echo "--> Checking Go module tidy..."
 	@go mod tidy -v
 	@if ! git diff --exit-code -- go.mod go.sum; then \
@@ -89,6 +91,31 @@ build: ## Build Go binary
 test: ## Run all Go tests (with -race)
 	@echo "--> Running Go tests..."
 	@go test -v -race ./...
+
+# coverage: Generate coverage profile and summary
+coverage: ## Run tests with coverage and generate coverage.out and coverage.func
+	@echo "--> Running coverage (atomic)..."
+	@go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+	@go tool cover -func=coverage.out | tee coverage.func
+	@echo "--> Total coverage:" $$(awk '/^total:/{print $$3}' coverage.func)
+
+# coverage-html: Generate HTML coverage report
+coverage-html: coverage ## Generate HTML coverage report (coverage.html)
+	@echo "--> Generating HTML coverage report..."
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo "Open coverage.html in your browser to view details."
+
+# coverage-check: Enforce 100% statement coverage
+coverage-check: ## Fail if total coverage is not 100%
+	@echo "--> Enforcing 100% coverage..."
+	@go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+	@go tool cover -func=coverage.out | tee coverage.func
+	@if ! awk '/^total:/{ if ($$3 == "100.0%") ok=1 } END { exit ok?0:1 }' coverage.func; then \
+		awk '/^total:/{ print "Current total:", $$3 }' coverage.func; \
+		echo "FAILURE: Coverage must be exactly 100%."; \
+		exit 1; \
+	fi
+	@echo "✅ Coverage is 100%."
 
 # ==============================================================================
 # Cleaning
