@@ -1,4 +1,5 @@
 package main
+package main
 
 import (
 	"errors"
@@ -26,8 +27,7 @@ func (r *RealCommandRunner) Run(name string, args []string, stdin io.Reader, std
 
 	err := cmd.Run()
 
-	// Extract the exit code
-	exitCode := 0
+	package main
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
