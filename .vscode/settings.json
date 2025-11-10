@@ -8,5 +8,6 @@
   ],
   "[yaml]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  },
+  "yaml.validate": false
 }

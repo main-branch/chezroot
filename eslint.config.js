@@ -15,8 +15,9 @@ export default [
   // Global ignores
   {
     ignores: [
-      "node_modules/",
-      ".github/workflows/**"
+      'node_modules/',
+      '.github/workflows/**',
+      '.golangci.yml' // golangci-lint has its own schema that doesn't match ESLint YAML plugin
     ]
   }
 ];

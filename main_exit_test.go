@@ -12,7 +12,7 @@ type mockExitRunner struct {
 	err  error
 }
 
-func (m *mockExitRunner) Run(name string, args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
+func (m *mockExitRunner) Run(_ string, _ []string, _ io.Reader, _, _ io.Writer) (int, error) {
 	return m.code, m.err
 }
 

@@ -1,0 +1,69 @@
+# golangci-lint configuration
+# This configuration represents the default checks that golangci-lint runs.
+# Version: v1.64.8
+
+run:
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 5m
+
+  # Exit code when at least one issue was found.
+  # Default: 1
+  issues-exit-code: 1
+
+  # Include test files or not.
+  # Default: true
+  tests: true
+
+  # If set we pass it to "go list -mod={option}". From "go help modules":
+  # If invoked with -mod=readonly, the go command is disallowed from the implicit
+  # automatic updating of go.mod described above. Instead, it fails when any changes
+  # to go.mod are needed. This setting is most useful to check that go.mod does not
+  # need updates, such as in a continuous integration and testing system.
+  # If invoked with -mod=vendor, the go command assumes that the vendor
+  # directory holds the correct copies of dependencies and ignores
+  # the dependency descriptions in go.mod.
+  #
+  # Allowed values: readonly|vendor|mod
+  # Default: ""
+  modules-download-mode: readonly
+
+linters:
+  # Disable all linters by default, then explicitly enable the ones we want
+  disable-all: true
+
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default
+  enable:
+    # --- Core (Default) Linters ---
+    - errcheck      # Checks for unchecked errors
+    - govet         # Reports suspicious constructs
+    - ineffassign   # Detects unused assignments
+    - staticcheck   # Comprehensive static analysis (includes gosimple & unused)
+
+    # --- Security & Correctness ---
+    - gosec         # Security issues
+    - bodyclose     # Checks HTTP response body is closed
+    - errorlint     # Find code that will cause problems with error wrapping
+
+    # --- Code Quality & Style ---
+    - gofumpt       # Stricter formatting than gofmt
+    - gocritic      # Opinionated linter with many checks
+    - revive        # Fast, configurable, extensible linter
+    - misspell      # Finds commonly misspelled English words
+    - unconvert     # Remove unnecessary type conversions
+
+  # Disable specific linter
+  # https://golangci-lint.run/usage/linters/#disabled-by-default
+  disable: []
+
+issues:
+  # Maximum issues count per one linter.
+  # Set to 0 to disable.
+  # Default: 50
+  max-issues-per-linter: 0
+
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
+  max-same-issues: 0
