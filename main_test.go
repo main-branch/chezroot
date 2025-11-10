@@ -11,7 +11,7 @@ type mockRunnerMinimal struct {
 	err  error
 }
 
-func (m *mockRunnerMinimal) Run(name string, args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
+func (m *mockRunnerMinimal) Run(_ string, _ []string, _ io.Reader, _, _ io.Writer) (int, error) {
 	return m.code, m.err
 }
 

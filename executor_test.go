@@ -29,7 +29,7 @@ type MockCommandRunner struct {
 }
 
 // Run implements the CommandRunner interface for testing.
-func (m *MockCommandRunner) Run(name string, args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
+func (m *MockCommandRunner) Run(name string, args []string, _ io.Reader, stdout, stderr io.Writer) (int, error) {
 	m.ActualCommand = name
 	m.ActualArgs = args
 
@@ -45,7 +45,7 @@ func (m *MockCommandRunner) Run(name string, args []string, stdin io.Reader, std
 
 // captureOutput is a helper that wraps ExecuteChezmoiWithRunner to capture stdout/stderr
 // instead of printing to the console during tests.
-func captureOutput(runner CommandRunner, args []string, useSudo bool) (exitCode int, err error, stdout, stderr string) {
+func captureOutput(runner CommandRunner, args []string, useSudo bool) (exitCode int, stdout, stderr string, err error) {
 	var outBuf, errBuf bytes.Buffer
 
 	// Create a wrapper that captures output
@@ -56,7 +56,7 @@ func captureOutput(runner CommandRunner, args []string, useSudo bool) (exitCode 
 	}
 
 	exitCode, err = ExecuteChezmoiWithRunner(wrapper, args, useSudo)
-	return exitCode, err, outBuf.String(), errBuf.String()
+	return exitCode, outBuf.String(), errBuf.String(), err
 }
 
 // outputCapturingRunner wraps a CommandRunner and redirects output to buffers
@@ -66,7 +66,7 @@ type outputCapturingRunner struct {
 	stderr io.Writer
 }
 
-func (o *outputCapturingRunner) Run(name string, args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
+func (o *outputCapturingRunner) Run(name string, args []string, stdin io.Reader, _, _ io.Writer) (int, error) {
 	return o.runner.Run(name, args, stdin, o.stdout, o.stderr)
 }
 
@@ -77,8 +77,7 @@ func TestExecuteChezmoiWithRunner_BasicExecution(t *testing.T) {
 		StdoutOutput:   "chezmoi version v2.67.0\n",
 	}
 
-	exitCode, err, stdout, stderr := captureOutput(mock, []string{"--version"}, false)
-
+	exitCode, stdout, stderr, err := captureOutput(mock, []string{"--version"}, false)
 	if err != nil {
 		t.Errorf("Expected no error, got: %v", err)
 	}
@@ -111,8 +110,7 @@ func TestExecuteChezmoiWithRunner_WithSudo(t *testing.T) {
 		StdoutOutput:   "chezmoi version v2.67.0\n",
 	}
 
-	exitCode, err, stdout, _ := captureOutput(mock, []string{"--version"}, true)
-
+	exitCode, stdout, _, err := captureOutput(mock, []string{"--version"}, true)
 	if err != nil {
 		t.Errorf("Expected no error, got: %v", err)
 	}
@@ -142,8 +140,7 @@ func TestExecuteChezmoiWithRunner_NonZeroExitCode(t *testing.T) {
 		StderrOutput:   "chezmoi: unknown command\n",
 	}
 
-	exitCode, err, _, stderr := captureOutput(mock, []string{"invalid-command"}, false)
-
+	exitCode, _, stderr, err := captureOutput(mock, []string{"invalid-command"}, false)
 	if err != nil {
 		t.Errorf("Expected no error from ExecuteChezmoi, got: %v", err)
 	}
@@ -164,7 +161,7 @@ func TestExecuteChezmoiWithRunner_CommandError(t *testing.T) {
 		ReturnError:    fmt.Errorf("failed to execute command: exec: \"chezmoi\": executable file not found in $PATH"),
 	}
 
-	exitCode, err, _, _ := captureOutput(mock, []string{"--version"}, false)
+	exitCode, _, _, err := captureOutput(mock, []string{"--version"}, false)
 
 	if err == nil {
 		t.Error("Expected error when command fails to execute, got nil")
@@ -183,8 +180,7 @@ func TestExecuteChezmoiWithRunner_MultipleArgs(t *testing.T) {
 	}
 
 	args := []string{"add", "/etc/hosts"}
-	exitCode, err, stdout, _ := captureOutput(mock, args, false)
-
+	exitCode, stdout, _, err := captureOutput(mock, args, false)
 	if err != nil {
 		t.Errorf("Expected no error, got: %v", err)
 	}
@@ -216,7 +212,6 @@ func TestExecuteChezmoiWithRunner_StdoutStderr(t *testing.T) {
 	}
 
 	exitCode, err := customRunner.Run("chezmoi", []string{"--version"}, nil, &stdout, &stderr)
-
 	if err != nil {
 		t.Errorf("Expected no error, got: %v", err)
 	}
