@@ -4,6 +4,8 @@ import (
 	"io"
 	"os"
 	"testing"
+
+	"github.com/main-branch/chezroot/internal/executor"
 )
 
 // mockExitRunner implements CommandRunner to drive main() paths.
@@ -34,7 +36,11 @@ func captureStderr(t *testing.T) (restore func() string) {
 
 // TestMainFunction_Success ensures main invokes exitFunc with underlying exit code.
 func TestMainFunction_Success(t *testing.T) {
-	defaultRunner = &mockExitRunner{code: 0, err: nil}
+	// Save original runner
+	originalRunner := executor.GetDefaultRunner()
+	defer executor.SetDefaultRunner(originalRunner)
+
+	executor.SetDefaultRunner(&mockExitRunner{code: 0, err: nil})
 	var got int
 	exitFunc = func(c int) { got = c }
 	defer func() { exitFunc = os.Exit }()
@@ -46,7 +52,11 @@ func TestMainFunction_Success(t *testing.T) {
 
 // TestMainFunction_Error ensures error path maps to exit code 1 and writes stderr.
 func TestMainFunction_Error(t *testing.T) {
-	defaultRunner = &mockExitRunner{code: -1, err: errSentinel}
+	// Save original runner
+	originalRunner := executor.GetDefaultRunner()
+	defer executor.SetDefaultRunner(originalRunner)
+
+	executor.SetDefaultRunner(&mockExitRunner{code: -1, err: errSentinel})
 	var got int
 	exitFunc = func(c int) { got = c }
 	defer func() { exitFunc = os.Exit }()
