@@ -3,6 +3,8 @@ package main
 import (
 	"io"
 	"testing"
+
+	"github.com/main-branch/chezroot/internal/executor"
 )
 
 // mockRunnerMinimal is a lightweight mock for testing run().
@@ -17,7 +19,11 @@ func (m *mockRunnerMinimal) Run(_ string, _ []string, _ io.Reader, _, _ io.Write
 
 // TestRun_Success covers the success path through run().
 func TestRun_Success(t *testing.T) {
-	defaultRunner = &mockRunnerMinimal{code: 0, err: nil}
+	// Save original runner
+	originalRunner := executor.GetDefaultRunner()
+	defer executor.SetDefaultRunner(originalRunner)
+
+	executor.SetDefaultRunner(&mockRunnerMinimal{code: 0, err: nil})
 	code := run([]string{"--version"})
 	if code != 0 {
 		// If chezmoi returned 0 we expect pass-through.
@@ -27,7 +33,11 @@ func TestRun_Success(t *testing.T) {
 
 // TestRun_Error covers the error path mapping to exit code 1.
 func TestRun_Error(t *testing.T) {
-	defaultRunner = &mockRunnerMinimal{code: -1, err: errSentinel}
+	// Save original runner
+	originalRunner := executor.GetDefaultRunner()
+	defer executor.SetDefaultRunner(originalRunner)
+
+	executor.SetDefaultRunner(&mockRunnerMinimal{code: -1, err: errSentinel})
 	code := run([]string{"--version"})
 	if code != 1 {
 		// Error should map to 1 irrespective of -1 sentinel.

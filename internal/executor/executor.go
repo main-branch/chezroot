@@ -1,5 +1,4 @@
-package main
-package main
+package executor
 
 import (
 	"errors"
@@ -27,7 +26,7 @@ func (r *RealCommandRunner) Run(name string, args []string, stdin io.Reader, std
 
 	err := cmd.Run()
 
-	package main
+	exitCode := 0
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
@@ -43,6 +42,16 @@ func (r *RealCommandRunner) Run(name string, args []string, stdin io.Reader, std
 
 // defaultRunner is the global default command runner.
 var defaultRunner CommandRunner = &RealCommandRunner{}
+
+// GetDefaultRunner returns the current default runner (for testing).
+func GetDefaultRunner() CommandRunner {
+	return defaultRunner
+}
+
+// SetDefaultRunner sets the default runner (for testing).
+func SetDefaultRunner(runner CommandRunner) {
+	defaultRunner = runner
+}
 
 // ExecuteChezmoi runs chezmoi in a subprocess with the given arguments.
 // If useSudo is true, it prefixes the command with "sudo".

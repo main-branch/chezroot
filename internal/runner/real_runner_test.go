@@ -1,14 +1,15 @@
-package main
-package main
+package runner
 
 import (
 	"bytes"
 	"testing"
+
+	"github.com/main-branch/chezroot/internal/executor"
 )
 
 // TestRealCommandRunner_Success verifies successful execution with output.
 func TestRealCommandRunner_Success(t *testing.T) {
-	runner := &RealCommandRunner{}
+	runner := &executor.RealCommandRunner{}
 	var stdout, stderr bytes.Buffer
 
 	exitCode, err := runner.Run("bash", []string{"-c", "echo hi"}, nil, &stdout, &stderr)
@@ -38,7 +39,7 @@ func TestRealCommandRunner_Success(t *testing.T) {
 
 // TestRealCommandRunner_NonZeroExit verifies non-zero exit captures exit code and yields nil error.
 func TestRealCommandRunner_NonZeroExit(t *testing.T) {
-	runner := &RealCommandRunner{}
+	runner := &executor.RealCommandRunner{}
 	var stdout, stderr bytes.Buffer
 	exitCode, err := runner.Run("bash", []string{"-c", "exit 7"}, nil, &stdout, &stderr)
 	if err != nil {
@@ -51,7 +52,7 @@ func TestRealCommandRunner_NonZeroExit(t *testing.T) {
 
 // TestRealCommandRunner_CommandNotFound verifies handling of an execution error (command not found).
 func TestRealCommandRunner_CommandNotFound(t *testing.T) {
-	runner := &RealCommandRunner{}
+	runner := &executor.RealCommandRunner{}
 	var stdout, stderr bytes.Buffer
 	exitCode, err := runner.Run("___no_such_command___", nil, nil, &stdout, &stderr)
 	if err == nil {
