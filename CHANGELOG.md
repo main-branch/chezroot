@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.13](https://github.com/main-branch/chezroot/compare/v0.1.12...v0.1.13) (2025-11-12)
+
+
+### Features
+
+* Add golangci-lint configuration and fix linting issues ([6207936](https://github.com/main-branch/chezroot/commit/62079366a795180d7a59d4537fc3d42cb989c06f))
+* **subprocess:** Add chezmoi subprocess execution wrapper and tests ([#42](https://github.com/main-branch/chezroot/issues/42)) ([05c2175](https://github.com/main-branch/chezroot/commit/05c2175c6fa727b1602ba200836689cd771d7bd3))
+
+
+### Bug Fixes
+
+* Correct package declarations and imports for Go standard structure ([05892ef](https://github.com/main-branch/chezroot/commit/05892ef9a584c32417bb6ad0492ccca13945591c))
+
+
+### Other Changes
+
+* Add a contributing guide ([f4b4c96](https://github.com/main-branch/chezroot/commit/f4b4c96a5bd7d0f630a7c0d2a7fc5b39d0454ec4))
+* **contributing:** Link all file references and point users to `make help` ([769bcf6](https://github.com/main-branch/chezroot/commit/769bcf6e4bc22816a6eb6645c56899a172906d28))
+* **coverage:** Add 100% test coverage enforcement ([aa44164](https://github.com/main-branch/chezroot/commit/aa44164fdd85fba52fc5edd20c0f0d1517fa922e))
+* Document `make help` at the top of the Makefile ([2ac2619](https://github.com/main-branch/chezroot/commit/2ac2619da0129f34446fda7f07032a06bbaa6798))
+* **make:** Add help target and document all targets ([76cfb1a](https://github.com/main-branch/chezroot/commit/76cfb1a8d182e6f06f9b4d4a63f80196b5c6dbaf))
+* Reorganize project to Go standard structure (internal/executor, internal/runner) ([29bf0be](https://github.com/main-branch/chezroot/commit/29bf0bea3bb9c15057d2f6869bac67cd9c779bad))
+
 ## [0.1.12](https://github.com/main-branch/chezroot/compare/v0.1.11...v0.1.12) (2025-11-04)
 
 
